@@ -12,6 +12,7 @@
         'WEBSITE_DESCRIPTION' => '',
         'WEBSITE_AUTHOR' => 'Raspbian-France',
         'PWD_SCRIPTS' => PWD . '/scripts',
+        'PWD_RECEIVEDS' => PWD . '/receiveds',
         'APP_SECRET' => 'retyuijokplmrtè34567890',
 
         //E-mail types
