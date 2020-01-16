@@ -8,13 +8,13 @@
 	# INCLUSIONS #
 	##############
 	//On va inclure l'ensemble des fichiers necessaires
-	require_once('./mvc/constants.php');
-	require_once('./mvc/autoload.php');
-	require_once('./mvc/conn_bdd.php');
-	require_once('./mvc/secho.php');
-	require_once('./mvc/Controller.php');
-	require_once('./mvc/Router.php');
-	require_once('./mvc/Model.php');
+	require_once(__DIR__.'/mvc/constants.php');
+	require_once(__DIR__.'/mvc/autoload.php');
+	require_once(__DIR__.'/mvc/conn_bdd.php');
+	require_once(__DIR__.'/mvc/secho.php');
+	require_once(__DIR__.'/mvc/Controller.php');
+	require_once(__DIR__.'/mvc/Router.php');
+	require_once(__DIR__.'/mvc/Model.php');
 
 	#########
 	# MODEL #
@@ -52,4 +52,3 @@
 	}
 
 	$controller->{$options['c']}(); //On appel la fonction
-

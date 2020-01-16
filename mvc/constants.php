@@ -44,7 +44,7 @@
 	define('WEBSITE_AUTHOR', 'Raspbian-France'); //Auteur du site
 
 	//Réglages des identifiants de base de données
-	define('DATABASE_HOST', 'localhost'); //Hote de la bdd
+	define('DATABASE_HOST', 'db'); //Hote de la bdd
 	define('DATABASE_NAME', 'raspisms'); //Nom de la bdd
 	define('DATABASE_USER', 'root'); //Utilisateur de la bdd
-	define('DATABASE_PASSWORD', ''); //Password de l'utilisateur
+	define('DATABASE_PASSWORD', 'root'); //Password de l'utilisateur

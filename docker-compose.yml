@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  adminer:
+    image: adminer
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`adminer.raspisms.localhost`)"
+      - "traefik.http.routers.adminer.entrypoints=web"
+
+  apache:
+    build: .
+    depends_on:
+      - db
+      - gammu 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.apache.rule=Host(`raspisms.localhost`)"
+      - "traefik.http.routers.apache.entrypoints=web"
+    volumes:
+      - ./var/gammu:/var/spool/gammu/
+      - ./receiveds:/var/www/html/RaspiSMS/receiveds
+
+  db:
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=raspisms
+    image: mariadb:10.1
+    volumes:
+      - ./createDatabase.sql:/docker-entrypoint-initdb.d/00_createDatabase.sql
+      - ./docker/insertAdminUser.sql:/docker-entrypoint-initdb.d/10_insertAdminUser.sql
+      - db:/var/lib/db
+
+  gammu:
+    build:
+      context: .
+      dockerfile: gammu.Dockerfile
+    devices:
+      - /dev/ttyUSB0:/dev/mobile
+    volumes:
+      - ./var/gammu:/var/spool/gammu/
+      - ./receiveds:/var/www/html/RaspiSMS/receiveds
+
+  jobber:
+    build:
+      context: .
+      dockerfile: jobber.Dockerfile
+    depends_on:
+      - apache
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  traefik:
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    image: traefik:2.1.1
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+volumes:
+  db: ~

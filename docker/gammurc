@@ -1,0 +1,4 @@
+[gammu]
+device = /dev/mobile
+connection = at
+GammuLoc = fr_FR.UTF8

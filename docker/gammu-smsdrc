@@ -1,0 +1,14 @@
+[gammu]
+device = /dev/mobile
+connection = at
+GammuLoc = fr_FR.UTF8
+
+[smsd]
+service = files
+logfile = /dev/stdout
+debuglevel = 3
+RunOnReceive = /usr/local/bin/parseSMS.sh
+inboxpath = /var/spool/gammu/inbox/
+outboxpath = /var/spool/gammu/outbox/
+sentsmspath = /var/spool/gammu/sent/
+errorsmspath = /var/spool/gammu/error/
