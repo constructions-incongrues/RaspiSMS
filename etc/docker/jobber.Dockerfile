@@ -28,7 +28,7 @@ RUN addgroup jobberuser && \
     mkdir -p "/var/jobber/${USERID}" && \
     chown -R jobberuser:jobberuser "/var/jobber/${USERID}"
 
-COPY --chown=jobberuser:jobberuser docker/jobber.yaml /home/jobberuser/.jobber
+COPY --chown=jobberuser:jobberuser ./etc/docker/jobber.yaml /home/jobberuser/.jobber
 RUN chown jobberuser:jobberuser /home/jobberuser/.jobber && \
     chmod 0600 /home/jobberuser/.jobber
 USER jobberuser

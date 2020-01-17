@@ -5,9 +5,9 @@ RUN apt-get update && \
         gammu \
         gammu-smsd \
         libgammu-i18n
-COPY ./docker/gammurc /etc/gammu
-COPY ./docker/gammu-smsdrc /etc/gammu-smsdrc
-COPY ./parseSMS.sh /usr/local/bin/parseSMS.sh
+COPY ./etc/docker/gammurc /etc/gammu
+COPY ./etc/docker/gammu-smsdrc /etc/gammu-smsdrc
+COPY ./src/parseSMS.sh /usr/local/bin/parseSMS.sh
 RUN chmod +x /usr/local/bin/parseSMS.sh
 
 ENTRYPOINT [ "gammu-smsd" ]

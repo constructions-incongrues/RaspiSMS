@@ -17,14 +17,14 @@ RUN apt-get update && \
         gammu-smsd \
         libgammu-i18n
 
-COPY ./docker/gammurc /etc/gammu
-COPY ./docker/gammu-smsdrc /etc/gammu-smsdrc
+COPY ./etc/docker/gammurc /etc/gammu
+COPY ./etc/docker/gammu-smsdrc /etc/gammu-smsdrc
 
-COPY ./docker/apache.conf /etc/apache2/sites-available/raspisms.conf
+COPY ./etc/docker/apache.conf /etc/apache2/sites-available/raspisms.conf
 RUN a2ensite raspisms && \
     a2enmod rewrite
 
-COPY . /var/www/html/RaspiSMS
+COPY ./src /var/www/html/RaspiSMS
 RUN chmod +x /var/www/html/RaspiSMS/console.php
 
 WORKDIR /var/www/html/RaspiSMS
