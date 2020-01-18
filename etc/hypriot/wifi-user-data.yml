@@ -13,8 +13,8 @@ manage_etc_hosts: true
 
 # You could modify this for your own user information
 users:
-  - name: pirate
-    gecos: "Hypriot Pirate"
+  - name: raspisms
+    gecos: "Le Magnat du Texto"
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     groups: users,docker,video
