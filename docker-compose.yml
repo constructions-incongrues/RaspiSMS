@@ -1,77 +1,43 @@
-version: '3'
+version: '2'
 
 services:
-  adminer:
-    image: adminer
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.adminer.rule=Host(`adminer.${RASPISMS_DOMAIN-raspisms.localhost}`)"
-      - "traefik.http.routers.adminer.entrypoints=web"
-
-  apache:
+  db:
     build:
       context: .
-      dockerfile: etc/docker/apache.Dockerfile
-    depends_on:
-      - db
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.apache.rule=Host(`${RASPISMS_DOMAIN-raspisms.localhost}`)"
-      - "traefik.http.routers.apache.entrypoints=web"
-    volumes:
-      - ./var/gammu:/var/spool/gammu/
-      - ./var/receiveds:/var/www/html/RaspiSMS/receiveds
-
-  db:
+      dockerfile: ./db/Dockerfile
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=raspisms
-    image: linuxserver/mariadb:arm32v7-latest
+
+  raspisms:
+    build:
+      context: .
+      dockerfile: ./raspisms/Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "80:80"
     volumes:
-      - ./src/createDatabase.sql:/config/initdb.d/00_createDatabase.sql
-      - ./etc/docker/insertAdminUser.sql:/config/initdb.d/10_insertAdminUser.sql
-      - db:/var/lib/db
+      - gammu:/var/spool/gammu/
+      - receiveds:/var/www/html/RaspiSMS/receiveds
 
   gammu:
     build:
       context: .
-      dockerfile: etc/docker/gammu.Dockerfile
+      dockerfile: ./gammu/Dockerfile
     devices:
-      - ${RASPISMS_DEVICE-/dev/null}:/dev/mobile
+      - /dev/ttyUSB0:/dev/mobile
     volumes:
-      - ./var/gammu:/var/spool/gammu/
-      - ./var/receiveds:/var/www/html/RaspiSMS/receiveds
+      - gammu:/var/spool/gammu/
+      - receiveds:/var/www/html/RaspiSMS/receiveds
 
   jobber:
-    build:
-      context: .
-      dockerfile: etc/docker/jobber.Dockerfile
+    build: ./jobber
     depends_on:
-      - apache
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
-  ngrok:
-    depends_on:
-      - apache
-    image: wernight/ngrok:armhf
+      - raspisms
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ngrok.rule=Host(`ngrok.${RASPISMS_DOMAIN-raspisms.localhost}`)"
-      - "traefik.http.routers.ngrok.entrypoints=web"
-
-  traefik:
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-    image: traefik:2.1.1
-    ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "io.balena.features.balena-socket=true"
 
 volumes:
-  db: ~
+  gammu: ~
+  receiveds: ~

@@ -1,0 +1,7 @@
+---
+- name: ParseReceivedSMS
+  cmd: "su-exec root docker exec $(su-exec root docker ps --filter 'name=raspisms*' -q) /var/www/html/RaspiSMS/console.php -c parseReceivedSMS"
+  time: "0 *"
+- name: SendScheduleds
+  cmd: "su-exec root docker exec $(su-exec root docker ps --filter 'name=raspisms*' -q) /var/www/html/RaspiSMS/console.php -c SendScheduleds"
+  time: "0 *"
