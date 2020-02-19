@@ -1,4 +1,4 @@
-version: '2'
+version: '2.4'
 
 services:
   db:
@@ -8,25 +8,54 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=raspisms
-
-  raspisms:
-    build:
-      context: .
-      dockerfile: ./raspisms/Dockerfile
-    depends_on:
-      - db
-    ports:
-      - "80:80"
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 30s
+      retries: 10
     volumes:
-      - gammu:/var/spool/gammu/
-      - receiveds:/var/www/html/RaspiSMS/receiveds
+      - db:/var/config/databases
+
+  directus:
+    build: ./directus
+    depends_on:
+      - directus_installer
+    environment:
+      - DIRECTUS_AUTH_PUBLICKEY=11223344
+      - DIRECTUS_AUTH_SECRETKEY=55667788
+      - DIRECTUS_DATABASE_HOST=db
+      - DIRECTUS_DATABASE_NAME=raspisms
+      - DIRECTUS_DATABASE_USERNAME=root
+      - DIRECTUS_DATABASE_PASSWORD=root
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.directus.rule=PathPrefix(`/directus`)"
+      - "traefik.http.routers.directus.middlewares=directus_stripprefix"
+      - "traefik.http.middlewares.directus_stripprefix.stripprefix.prefixes=/directus"
+      - "traefik.http.routers.directus.entrypoints=web"
+
+  directus_installer:
+    build: ./directus
+    command:
+      - install
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DIRECTUS_AUTH_PUBLICKEY=11223344
+      - DIRECTUS_AUTH_SECRETKEY=55667788
+      - DIRECTUS_DATABASE_HOST=db
+      - DIRECTUS_DATABASE_USERNAME=root
+      - DIRECTUS_DATABASE_PASSWORD=root
+      - DIRECTUS_DATABASE_NAME=raspisms
+      - DIRECTUS_INSTALL_PASSWORD=admin
 
   gammu:
     build:
       context: .
       dockerfile: ./gammu/Dockerfile
     devices:
-      - /dev/ttyUSB0:/dev/mobile
+      - /dev/null:/dev/mobile
     volumes:
       - gammu:/var/spool/gammu/
       - receiveds:/var/www/html/RaspiSMS/receiveds
@@ -38,6 +67,37 @@ services:
     labels:
       - "io.balena.features.balena-socket=true"
 
+  raspisms:
+    build:
+      context: .
+      dockerfile: ./raspisms/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.raspisms.rule=PathPrefix(`/raspisms`)"
+      - "traefik.http.routers.raspisms.entrypoints=web"
+    volumes:
+      - gammu:/var/spool/gammu/
+      - receiveds:/var/www/html/RaspiSMS/receiveds
+
+  traefik:
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    image: traefik:2.1.4
+    labels:
+      - "io.balena.features.balena-socket=true"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
 volumes:
+  db: ~
   gammu: ~
   receiveds: ~

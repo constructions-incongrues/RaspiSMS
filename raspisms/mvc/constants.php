@@ -4,8 +4,8 @@
 	*/
 
 	//On définit les chemins
-    define('PWD', '/var/www/html/RaspiSMS/'); //On définit le chemin de base du site
-	define('HTTP_ROOT', '/'); //On définit la racine d'accès (selon nore vhost)
+    define('PWD', '/var/www/html/raspisms/'); //On définit le chemin de base du site
+	define('HTTP_ROOT', '/raspisms/'); //On définit la racine d'accès (selon nore vhost)
 	define('HTTP_PORT', '80'); //On définit le port sur lequel est raspisms
 	define('HTTP_PWD', (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost') . ( ((HTTP_PORT != 443 AND isset($_SERVER['HTTPS'])) OR (HTTP_PORT != 80 AND !isset($_SERVER['HTTPS']))) ? ':'. HTTP_PORT : '') . HTTP_ROOT); //On défini l'adresse url du site
 

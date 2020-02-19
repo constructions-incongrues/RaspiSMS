@@ -1,6 +1,7 @@
 [gammu]
 device = /dev/mobile
 connection = at
+GammuCoding = utf8
 GammuLoc = fr_FR.UTF8
 
 [smsd]
@@ -12,3 +13,4 @@ inboxpath = /var/spool/gammu/inbox/
 outboxpath = /var/spool/gammu/outbox/
 sentsmspath = /var/spool/gammu/sent/
 errorsmspath = /var/spool/gammu/error/
+PIN = 1234
