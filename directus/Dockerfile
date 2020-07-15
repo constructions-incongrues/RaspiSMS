@@ -1,1 +1,2 @@
-FROM directus/directus:v8.5.5-apache
+# constructionsincongrues/directus:v8.6.2-apache
+FROM constructionsincongrues/directus@sha256:971dcb691607af60c423ff2411906da64c79fc3d622d68be448517507f90b6b2

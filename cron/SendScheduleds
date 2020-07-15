@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Fail early !
+set -ex
+
+# Run script in remote container
+su-exec root docker exec $(su-exec root docker ps --filter 'name=raspisms_*' --latest -q) /bin/sh -c "/var/www/html/raspisms/console.php -c SendScheduleds"

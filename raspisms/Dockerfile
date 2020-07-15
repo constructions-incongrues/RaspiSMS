@@ -1,4 +1,10 @@
-FROM arm32v7/debian:stretch
+# debian:stretch-slim
+FROM debian@sha256:c89506d37c80f9fd93489bc9b11a1453e62b791b5b7430e39b0b8baa69a40d80
+
+# Configuration de la locale par défaut
+ENV LANG fr_FR.UTF-8
+ENV LANGUAGE fr_FR:fr
+ENV LC_ALL fr_FR.UTF-8
 
 EXPOSE 80
 
@@ -15,17 +21,16 @@ RUN apt-get update && \
         php7.0-readline \
         gammu \
         gammu-smsd \
-        libgammu-i18n
-
+        libgammu-i18n \
+        locales && \
+        sed -i -e 's/# fr_FR.UTF-8 UTF-8/fr_FR.UTF-8 UTF-8/' /etc/locale.gen && \
+        locale-gen
 COPY ./gammu/gammurc /etc/gammu
 COPY ./gammu/gammu-smsdrc /etc/gammu-smsdrc
 
 COPY ./raspisms/apache.conf /etc/apache2/sites-available/raspisms.conf
 RUN a2ensite raspisms && \
     a2enmod rewrite
-
-# RUN sed -i s#/var/www/html#/var/www/html/raspisms# /etc/apache2/sites-available/000-default.conf && \
-#     sed -i s#/var/www/html#/var/www/html/raspisms# /etc/apache2/sites-available/default-ssl.conf
 
 COPY ./raspisms /var/www/html/raspisms
 RUN chmod +x /var/www/html/raspisms/console.php

@@ -13,4 +13,5 @@ inboxpath = /var/spool/gammu/inbox/
 outboxpath = /var/spool/gammu/outbox/
 sentsmspath = /var/spool/gammu/sent/
 errorsmspath = /var/spool/gammu/error/
-PIN = 1234
+PIN = 0000
+SMSC = 0033695000695
